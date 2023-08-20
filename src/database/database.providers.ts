@@ -1,5 +1,8 @@
 import { DataSource } from 'typeorm';
 
+
+//TODO 환경변수 작업해주기. 
+
 export const databaseProviders = [
   {
     provide: 'DATA_SOURCE',
