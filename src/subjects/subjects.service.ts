@@ -24,6 +24,8 @@ export class SubjectsService {
     const mem = new Member
     mem.id = uId
 
+
+
     return await this.subjectRepository.findOne({
       relations: {
         posts: true
