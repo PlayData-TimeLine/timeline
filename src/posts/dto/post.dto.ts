@@ -5,28 +5,32 @@ import { Subject } from 'src/subjects/entities/subject.entity';
 import { Builder } from 'builder-pattern';
 import { Post } from '../entities/post.entity';
 
-export class PostDto   {
+export class PostDto {
 
-    constructor(post:CreatePostDto){
+    constructor(post: CreatePostDto) {
 
         this.name = post.name
         this.content = post.content
+        this.setTime = post.setTime
     }
 
-    name:string
+    name: string
 
-    content:string
+    content: string
+
+    setTime: Date
 
 
-    toEntity(mem:Member,sub:Subject): Post {
-        const  post = Builder<Post>()
-        .name(this.name)
-        .content(this.content)
-        .member(mem)
-        .subject(sub)
-        .build()
+    toEntity(mem: Member, sub: Subject): Post {
+        const post = Builder<Post>()
+            .title(this.name)
+            .content(this.content)
+            .member(mem)
+            .setDate(this.setTime)
+            .subject(sub)
+            .build()
 
-      return post
-  }
+        return post
+    }
 
 }

@@ -1,6 +1,6 @@
 import { Member } from "src/members/entities/member.entity";
 import { Subject } from "src/subjects/entities/subject.entity";
-import { PrimaryGeneratedColumn, Entity, Column ,ManyToOne,OneToMany } from "typeorm";
+import { PrimaryGeneratedColumn, Entity, Column, ManyToOne, OneToMany, Timestamp, CreateDateColumn } from "typeorm";
 
 @Entity("posts")
 export class Post {
@@ -9,15 +9,22 @@ export class Post {
     id: number;
 
     @Column()
-    name: string;
+    title: string;
 
     @Column()
     content: string;
 
+    @Column({ type: 'timestamp', nullable: true })
+    setDate: Date;
+
+
+    @CreateDateColumn()
+    CreateAt: Date
+
     @ManyToOne(() => Member, (member) => member.posts)
     member: Member
 
-    @ManyToOne(()=> Subject,(subject) => subject.posts)
+    @ManyToOne(() => Subject, (subject) => subject.posts)
     subject: Subject
 
 }
