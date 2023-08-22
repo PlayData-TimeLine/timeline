@@ -4,9 +4,17 @@ import { CreateMemberDto } from './create-member.dto'
 
 import { Member } from '../entities/member.entity'
 import { Builder } from 'builder-pattern'
+import { UpdateMemberDto } from './update-member.dto';
 
 
 export class MemberDto {
+
+    name: string;
+    nickname: string;
+
+    email: string;
+
+    password: string;
 
     constructor(createMemberDto: CreateMemberDto) {
 
@@ -15,14 +23,6 @@ export class MemberDto {
         this.password = createMemberDto.password
         this.nickname = createMemberDto.nickName
     }
-
-
-    name: string;
-    nickname: string;
-
-    email: string;
-
-    password: string;
 
     private toHashedPassword = async (pas: string): Promise<string> => {
         const pass = await bcrypt.hash(pas, 10); // 이 소금도 뿌리기도 환경변수로 가야함.

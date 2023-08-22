@@ -37,6 +37,74 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
+  findAllWithMember = async () => {
+
+    return await this.postRepository.find({
+      relations: {
+        member: true,
+        subject: true
+      },
+      select: {
+        member: {
+          id: true,
+          nickName: true
+        },
+        subject: {
+          name: true
+        }
+      }
+    })
+  }
+
+  findAllBySubjectWithMember = async (uId: number, sId: number) => { // 내가 원하는 주제로 글을 가져오기
+    const mem = new Member
+    mem.id = uId
+
+    const sub = new Subject
+    sub.id = sId
+
+    return await this.postRepository.find({
+
+      relations: {
+        member: true
+      },
+      where: {
+        subject: sub,
+        member: mem
+      },
+      select: {
+        member: {
+          id: true,
+          nickName: true,
+        }
+      }
+    })
+
+  }
+
+  findAllByMember = async (uId: number) => { // 그 멤버가 쓴 모든 글을 다 가져오기.
+    const mem = new Member
+    mem.id = uId
+
+    return await this.postRepository.find({
+      relations: {
+        member: true
+      },
+      where: {
+        member: mem
+      },
+      select: {
+        member: {
+          id: true,
+          nickName: true,
+        }
+      }
+    })
+  }
+
+
+
+
   findOne(id: number) {
     return `This action returns a #${id} post`;
   }
