@@ -27,7 +27,8 @@ export class Member {
     @OneToMany(() => Post, (post) => post.member)
     posts: Post[]
 
-
+    @Column()
+    profilePath: string;
 
 
 }

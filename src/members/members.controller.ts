@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -6,6 +6,9 @@ import { LoginMemberDto } from './dto/login-member.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Public } from 'src/auth/public.decorator';
 import { Request } from 'express';
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { MulterDiskOptions, profileChangeOption } from 'src/fileupload/multer.option';
+import { request } from 'http';
 
 
 @Controller('api/v1/members')
@@ -49,5 +52,17 @@ export class MembersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.membersService.remove(+id);
+  }
+
+  @Post('/changeProfile')
+  //@Roles('Member')
+  @Public()
+  @UseInterceptors(FilesInterceptor('file', 10, profileChangeOption))
+  changeProfile(@UploadedFile() file: Express.Multer.File, @Body('email') email: string, @Req() req: Request) {
+    if (req.files === null) {
+      return null;
+    } else {
+      return this.membersService.updateProfile(email, req.files[0].path)
+    }
   }
 }

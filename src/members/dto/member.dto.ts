@@ -39,6 +39,7 @@ export class MemberDto {
             .nickName(this.nickname)
             .password(pass)
             .name(this.name)
+            .profilePath("")
             .role('Member')
             .build()
 
