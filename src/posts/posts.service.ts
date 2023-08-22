@@ -41,12 +41,16 @@ export class PostsService {
 
     return await this.postRepository.find({
       relations: {
-        member: true
+        member: true,
+        subject: true
       },
       select: {
         member: {
           id: true,
           nickName: true
+        },
+        subject: {
+          name: true
         }
       }
     })

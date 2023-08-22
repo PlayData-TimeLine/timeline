@@ -46,12 +46,12 @@ export class SubjectsService {
   }
 
   findAllbyMember = async (id: number) => { //이건 그 멤버가 갖고있는 모든 글을 보는것
-    // const mem = new Member()
-    // mem.id = id
+    const mem = new Member()
+    mem.id = id
 
     return await this.subjectRepository.find({
-      relations: {
-        posts: true
+      where: {
+        member: mem
       }
     })
   }

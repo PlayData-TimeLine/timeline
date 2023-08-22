@@ -39,8 +39,6 @@ export class SubjectsController {
   @Roles('Member')
   findAllbyMember(@Req() req: Request) {
 
-    console.log(1)
-
     const mem = req.body.tokenData;
 
     return this.subjectsService.findAllbyMember(+mem.id);

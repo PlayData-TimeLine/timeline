@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { FriendsModule } from './friends/friends.module';
+import { CommentsModule } from './comments/comments.module';
+import { HeartsModule } from './hearts/hearts.module';
 
 /// jwt를 전역설정함으로서, 다른곳에서 서비스만 불러서 쓰게하는것.
 @Module({
@@ -16,7 +18,7 @@ import { FriendsModule } from './friends/friends.module';
     global: true,
     secret: "jwtConstants.secretawefawefvawefawe", // 이 키는 환경변수로 등록해줘야함.
     signOptions: { expiresIn: '2h' },
-  }), FriendsModule,
+  }), FriendsModule, CommentsModule, HeartsModule,
 ],
   controllers: [AppController],
   providers: [AppService,  {
