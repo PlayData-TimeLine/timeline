@@ -11,6 +11,16 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from './public.decorator';
 
+
+import * as dotenv from 'dotenv'
+
+//TODO 환경변수 작업해주기. 
+
+
+const config = dotenv.config().parsed 
+
+
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private reflector: Reflector) { }
@@ -63,7 +73,7 @@ export class AuthGuard implements CanActivate {
       payload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: "jwtConstants.secretawefawefvawefawe" // 이것도 환경변수 등록을 해줘야함.
+          secret: config.JWT_PASSWORD // 이것도 환경변수 등록을 해줘야함.
         }
       );
       // 💡 We're assigning the payload to the request object here
