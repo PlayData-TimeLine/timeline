@@ -19,14 +19,14 @@ export class SubjectsController {
   }
 
 
-  @Get(':id')
-  @Roles('Member')
-  findById(@Param() sid: number, @Req() req: Request) {
-    const uId = req.body.tokenData.id
+  // @Get(':sid')
+  // @Roles('Member')
+  // findById(@Param() sid: number, @Req() req: Request) {
+  //   const uId = req.body.tokenData.id
 
 
-    return this.subjectsService.findById(+sid, +uId)
-  }
+  //   return this.subjectsService.findById(+sid, +uId)
+  // }
 
   @Get()
   @Roles('Member')
@@ -35,14 +35,25 @@ export class SubjectsController {
   }
   // 이걸 사용할지말지 고민중.
 
-  @Get('with-member')
+  @Get('/with-member')
   @Roles('Member')
   findAllbyMember(@Req() req: Request) {
+
+    console.log(1)
 
     const mem = req.body.tokenData;
 
     return this.subjectsService.findAllbyMember(+mem.id);
   }
+
+  @Get('/with-member/:sid')
+  @Roles('Member')
+  findAllbyMemberWithSubject(@Req() req: Request, @Param('sid') sid: number) {
+    const mem = req.body.tokenData;
+
+    return this.subjectsService.findAllbyMemberWithSubject(+mem.id, +sid);
+  }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {

@@ -18,12 +18,31 @@ export class PostsController {
     return this.postsService.create(+uid, createPostDto);
   }
 
-  @Get()
-  findAll() {
-    return this.postsService.findAll();
+  @Get('all')
+  @Roles('Member')
+  findAllWithMember() {
+    return this.postsService.findAllWithMember();
   }
 
-  @Get(':id')
+  @Get('member/:uid')
+  @Roles('Member')
+  findAllByMember(@Param('uid') uId: number) {
+
+    return this.postsService.findAllByMember(+uId);
+  }
+
+  @Get('member/:uid/subject/:sid')
+  @Roles('Member')
+  findAllBySubjectWithMember(@Param('uid') uId: number, @Param('sid') sId: number) {
+
+    return this.postsService.findAllBySubjectWithMember(+uId, +sId);
+  }
+
+
+
+
+
+  @Get('post/:id')
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(+id);
   }

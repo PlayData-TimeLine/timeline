@@ -1,9 +1,11 @@
 import { Post } from "src/posts/entities/post.entity";
 import { PrimaryGeneratedColumn, Entity, Column, OneToMany, Unique, BeforeInsert, DeleteDateColumn } from "typeorm";
 
-@Unique(['email', 'id'])
+
 @Entity("members")
 export class Member {
+
+
 
     @PrimaryGeneratedColumn({ name: 'id' })
     id: number;
@@ -12,7 +14,9 @@ export class Member {
     @Column()
     name: string;
 
-    @Column({ name: 'email' })
+    @Column({
+        name: 'email', unique: true,
+    })
     email: string;
 
     @Column()
