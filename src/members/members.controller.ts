@@ -62,14 +62,16 @@ export class MembersController {
     return this.membersService.remove(+id);
   }
 
+  //임시로 roles 는 public
   @Post('/changeProfile')
   //@Roles('Member')
   @Public()
-  @UseInterceptors(FilesInterceptor('file', 10, profileChangeOption))
+  @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
   changeProfile(@UploadedFile() file: Express.Multer.File, @Body('email') email: string, @Req() req: Request) {
     if (req.files === null) {
       return null;
     } else {
+      //email 하고 fileinterceptor 를 통과한 파일 경로를 넣어서 저장
       return this.membersService.updateProfile(email, req.files[0].path)
     }
   }

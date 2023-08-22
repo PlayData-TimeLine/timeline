@@ -27,4 +27,7 @@ export class Post {
     @ManyToOne(() => Subject, (subject) => subject.posts)
     subject: Subject
 
+    @Column()
+    imgPaths: string;
+
 }
