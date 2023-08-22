@@ -7,6 +7,8 @@ import { MemberDto } from './dto/member.dto';
 import { LoginMemberDto } from './dto/login-member.dto';
 import { JwtService } from '@nestjs/jwt';
 
+import {ConfigService} from '@nestjs/config'
+
 
 import * as bcrypt from 'bcrypt'
 
@@ -16,7 +18,10 @@ import * as bcrypt from 'bcrypt'
 @Injectable()
 export class MembersService {
 
-  constructor(@Inject('MEMBER_REPOSITORY') private memberRepository: Repository<Member>, private jwtService: JwtService) { }
+  constructor(
+  @Inject('MEMBER_REPOSITORY') private memberRepository: Repository<Member>, 
+  private jwtService: JwtService,
+  private configService:ConfigService) { } // 이건 쓸지안쓸지 모름 .. 안쓸듯...
 
 
   async signup(createMemberDto: CreateMemberDto): Promise<Member> {
