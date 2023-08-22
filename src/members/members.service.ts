@@ -89,7 +89,8 @@ export class MembersService {
       select: {
         id: true,
         nickName: true,
-        email: true
+        email: true,
+        profilePath: true
       }
     });
   }
@@ -121,21 +122,16 @@ export class MembersService {
     return `This action removes a #${id} member`;
   }
 
-  updateProfile = async (email: string, profilePath: string) => {
+  updateProfile = async (uId: number, profilePath: string) => {
     try {
-      const member = await this.findByEmail(email);
-
-      if (!member) {
-        // 이메일에 해당하는 멤버가 없을 때 처리
-        return null;
-      }
+      const member = await this.findById(uId);
 
       member.profilePath = profilePath; // 프로필 경로 업데이트
       await this.memberRepository.save(member) // 변경된 내용을 저장
       console.log("변경완료")
     } catch (error) {
       // 오류 처리
-      throw new Error(`Failed to update profile: ${error.message}`);
+      throw new HttpException(`Failed to update profile: ${error.message}`, HttpStatus.BAD_REQUEST);
     }
   }
 }

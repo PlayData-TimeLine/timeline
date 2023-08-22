@@ -37,12 +37,13 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
-  findAllWithMember = async () => {
+  findAllWithMember = async (uid: number) => {
 
     return await this.postRepository.find({
       relations: {
         member: true,
-        subject: true
+        subject: true,
+        heart: true
       },
       select: {
         member: {
@@ -51,7 +52,23 @@ export class PostsService {
         },
         subject: {
           name: true
+        },
+
+        heart: { // 뭔가 방식이 좀 구리긴 함... 차라리 하트 서비스를 찌르는게 낫나?
+          isit: await this.postRepository.findOne({
+            relations: {
+              heart: true
+            },
+            where: {
+              heart: {
+                member: {
+                  id: uid
+                }
+              }
+            }
+          }) ? true : false
         }
+
       }
     })
   }
@@ -88,7 +105,7 @@ export class PostsService {
 
     return await this.postRepository.find({
       relations: {
-        member: true
+        member: true,
       },
       where: {
         member: mem
@@ -102,6 +119,14 @@ export class PostsService {
     })
   }
 
+  findOneById = async (id: number) => {
+    return await this.postRepository.findOne({
+
+      where: {
+        id: id
+      }
+    })
+  }
 
 
 
@@ -111,6 +136,10 @@ export class PostsService {
 
   update(id: number, updatePostDto: UpdatePostDto) {
     return `This action updates a #${id} post`;
+  }
+
+  updateWithPost = async (id: number, post: Post) => {
+    return this.postRepository.update(id, post)
   }
 
   remove(id: number) {

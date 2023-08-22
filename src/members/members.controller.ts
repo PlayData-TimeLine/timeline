@@ -9,7 +9,6 @@ import { Request } from 'express';
 import { updatePassword } from './dto/update-password.dto';
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterDiskOptions, profileChangeOption } from 'src/fileupload/multer.option';
-import { request } from 'http';
 
 
 @Controller('api/v1/members')
@@ -67,12 +66,12 @@ export class MembersController {
   //@Roles('Member')
   @Public()
   @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
-  changeProfile(@UploadedFile() file: Express.Multer.File, @Body('email') email: string, @Req() req: Request) {
+  changeProfile(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
     if (req.files === null) {
       return null;
     } else {
       //email 하고 fileinterceptor 를 통과한 파일 경로를 넣어서 저장
-      return this.membersService.updateProfile(email, req.files[0].path)
+      return this.membersService.updateProfile(+req.body.tokenData.id, req.files[0].path)
     }
   }
 }

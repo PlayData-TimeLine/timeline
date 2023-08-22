@@ -1,3 +1,5 @@
+import { Comment } from "src/comments/entities/comment.entity";
+import { Heart } from "src/hearts/entities/heart.entity";
 import { Member } from "src/members/entities/member.entity";
 import { Subject } from "src/subjects/entities/subject.entity";
 import { PrimaryGeneratedColumn, Entity, Column, ManyToOne, OneToMany, Timestamp, CreateDateColumn } from "typeorm";
@@ -29,5 +31,14 @@ export class Post {
 
     @Column()
     imgPaths: string;
+
+    @Column({ default: 0 })
+    heartCount: number
+
+    @OneToMany(() => Comment, (comment) => comment.post)
+    comment: Comment
+
+    @OneToMany(() => Heart, (heart) => heart.post)
+    heart: Heart
 
 }

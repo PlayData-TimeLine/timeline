@@ -20,9 +20,10 @@ export class PostsController {
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.
-  @Public()
-  findAllWithMember() {
-    return this.postsService.findAllWithMember();
+  @Roles('Member')
+  findAllWithMember(@Req() req: Request) {
+    const uid = req.body.tokenData.id
+    return this.postsService.findAllWithMember(uid);
   }
 
   @Get('member/:uid') // 그 멤버에 맞는 글을 가져오기

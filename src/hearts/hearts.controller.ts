@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { HeartsService } from './hearts.service';
 import { CreateHeartDto } from './dto/create-heart.dto';
-import { UpdateHeartDto } from './dto/update-heart.dto';
+import { Request } from 'express';
+import { Public } from 'src/auth/public.decorator';
+import { Roles } from 'src/auth/roles.decorator';
 
-@Controller('hearts')
+@Controller('api/v1/hearts')
 export class HeartsController {
-  constructor(private readonly heartsService: HeartsService) {}
+  constructor(private readonly heartsService: HeartsService) { }
 
-  @Post()
-  create(@Body() createHeartDto: CreateHeartDto) {
-    return this.heartsService.create(createHeartDto);
+  @Post('/to-post/:tid')
+  @Roles('Member')
+  hearts(@Req() req: Request, @Param('tid') tId: number) {
+
+    const uId = req.body.tokenData.id
+    return this.heartsService.hearts(uId, tId);
   }
 
-  @Get()
-  findAll() {
-    return this.heartsService.findAll();
-  }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.heartsService.findOne(+id);
-  }
+  // @Get()
+  // findAll() {
+  //   return this.heartsService.findAll();
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHeartDto: UpdateHeartDto) {
-    return this.heartsService.update(+id, updateHeartDto);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.heartsService.findOne(+id);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.heartsService.remove(+id);
-  }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.heartsService.remove(+id);
+  // }
 }
