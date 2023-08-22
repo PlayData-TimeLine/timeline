@@ -10,7 +10,7 @@ import { Public } from 'src/auth/public.decorator';
 
 @Controller('members')
 export class MembersController {
-  constructor(private readonly membersService: MembersService) {}
+  constructor(private readonly membersService: MembersService) { }
 
   @Post('/signup')
   @Public()
@@ -20,7 +20,8 @@ export class MembersController {
 
   @Post('/login')
   @Public()
-  login(@Body() login:LoginMemberDto){
+  login(@Body() login: LoginMemberDto) {
+    console.log(1)
     return this.membersService.login(login)
   }
 
