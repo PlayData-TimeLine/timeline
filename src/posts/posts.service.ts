@@ -1,4 +1,4 @@
-import { Injectable,Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
@@ -14,25 +14,23 @@ import { PostDto } from './dto/post.dto';
 export class PostsService {
 
   constructor(
-    @Inject('POST_REPOSITORY') 
-  private postRepository: Repository<Post>,
-  private readonly membersService: MembersService){}
+    @Inject('POST_REPOSITORY')
+    private postRepository: Repository<Post>,
+    private readonly membersService: MembersService) { }
 
 
-  create(createPostDto: CreatePostDto) {
+  create = async (id: number, createPostDto: CreatePostDto) => {
 
     // this.membersService.findOne()
-    const member =  new Member
-    member.id = 2
+    const member = new Member
+    member.id = id
     const subject = new Subject
     subject.id = createPostDto.subjectNum
 
-    const post = new PostDto(createPostDto).toEntity(member,subject)
-    
+    const post = new PostDto(createPostDto).toEntity(member, subject)
 
-    // console.log(post)
 
-    return this.postRepository.save(post);
+    return await this.postRepository.save(post);
   }
 
   findAll() {

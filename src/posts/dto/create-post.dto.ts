@@ -16,5 +16,7 @@ export class CreatePostDto {
     @IsNotEmpty()
     subjectNum: number
 
+    setTime: Date
+
 
 }

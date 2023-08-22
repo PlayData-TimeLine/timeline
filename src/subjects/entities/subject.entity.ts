@@ -1,7 +1,7 @@
 
 import { Member } from "src/members/entities/member.entity";
 import { Post } from "src/posts/entities/post.entity";
-import { PrimaryGeneratedColumn, Entity, Column,OneToMany,ManyToOne ,OneToOne} from "typeorm";
+import { PrimaryGeneratedColumn, Entity, Column, OneToMany, ManyToOne, OneToOne } from "typeorm";
 
 @Entity("subjects")
 export class Subject {
@@ -12,7 +12,7 @@ export class Subject {
     name: string;
 
     @ManyToOne(() => Member)
-    member: Member 
+    member: Member
 
     @OneToMany(() => Post, (post) => post.subject)
     posts: Post

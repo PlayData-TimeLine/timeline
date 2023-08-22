@@ -1,30 +1,33 @@
 import { Post } from "src/posts/entities/post.entity";
-import { PrimaryGeneratedColumn, Entity, Column,OneToMany, Unique,BeforeInsert } from "typeorm";
+import { PrimaryGeneratedColumn, Entity, Column, OneToMany, Unique, BeforeInsert, DeleteDateColumn } from "typeorm";
 
-@Unique(['email','id'])
+@Unique(['email', 'id'])
 @Entity("members")
 export class Member {
 
-    @PrimaryGeneratedColumn({name:'id'})
+    @PrimaryGeneratedColumn({ name: 'id' })
     id: number;
 
-    
+
     @Column()
     name: string;
 
-    @Column({name:'email'})
-    email:string;
+    @Column({ name: 'email' })
+    email: string;
 
     @Column()
-    password : string;
+    nickName: string;
 
-    @Column({default: 'Member'})
-    role:string
+    @Column()
+    password: string;
+
+    @Column({ default: 'Member' })
+    role: string
 
     @OneToMany(() => Post, (post) => post.member)
     posts: Post[]
 
-  
+
 
 
 }
