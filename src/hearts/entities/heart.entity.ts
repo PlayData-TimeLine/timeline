@@ -8,8 +8,8 @@ export class Heart {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ default: true })
-    isit: boolean
+    @Column()
+    memberId: number
 
     @ManyToOne(() => Member, (member) => member.hearts)
     member: Member

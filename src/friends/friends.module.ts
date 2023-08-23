@@ -9,7 +9,7 @@ import { TokenModule } from 'src/auth/token.module';
 @Module({
   controllers: [FriendsController],
   providers: [FriendsService, ...friendsProviders],
-  imports: [DatabaseModule, forwardRef(() => MembersModule), TokenModule],
+  imports: [DatabaseModule, TokenModule],
   exports: [FriendsService]
 })
 export class FriendsModule { }

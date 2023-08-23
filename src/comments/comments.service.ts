@@ -28,14 +28,12 @@ export class CommentsService {
   }
 
   findAllOfPost = async (pId: number) => {
-    const pos = new Post
-    pos.id = pId
-
+ 
     return await this.commentRepository.find({
 
       where: {
         post: {
-          id: pos.id
+          id: pId
         }
       }
 

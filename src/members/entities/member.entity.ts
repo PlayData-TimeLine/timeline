@@ -39,7 +39,7 @@ export class Member {
     @OneToMany(() => Heart, (hearts) => hearts.member)
     hearts: Heart[]
 
-    @Column()
+    @Column({nullable:true})
     profilePath: string;
 
 

@@ -1,3 +1,3 @@
 export enum FriendStatus {
-    APPLYING, FRIEND
+    APPLYING="APPLYING", FRIEND="FRIEND"
 }

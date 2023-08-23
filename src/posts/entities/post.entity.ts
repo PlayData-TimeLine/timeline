@@ -29,7 +29,7 @@ export class Post {
     @ManyToOne(() => Subject, (subject) => subject.posts)
     subject: Subject
 
-    @Column()
+    @Column({nullable:true})
     imgPaths: string;
 
     @Column({ default: 0 })
