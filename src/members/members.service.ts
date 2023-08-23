@@ -34,7 +34,7 @@ export class MembersService {
     try {
 
       const mem = await this.memberRepository.save(member)
-      return mem;
+      return {...mem,password:''};
 
     } catch (err) {
 
@@ -107,14 +107,15 @@ export class MembersService {
 
       where: {
         id: pId
+      },
+      select:{
+        password:false
       }
     })
 
     const relations = await this.friendsService.findRelation(yourId, pId)
 
-    console.log(relations)
-
-    return { ...mem, relations: relations }
+    return { ...mem ,relations: relations }
 
   }
 
