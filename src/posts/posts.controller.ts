@@ -22,6 +22,7 @@ export class PostsController {
     const mem = await this.tokenService.unpack(req)
 
     //body field 값으로 createdto 생성
+    //객체를 보내려고 시도했는데 .... 
     const createPostDto = new CreatePostDto();
     createPostDto.title = title;
     createPostDto.content = content
@@ -31,11 +32,10 @@ export class PostsController {
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.
-  // @Roles('Member')
-  @Public()
-  findAllWithMember(@Req() req: Request) {
-    // const uid = req.body.tokenData.id
-    return this.postsService.findAllWithMember(5);
+  @Roles('Member')
+  async findAllWithMember(@Req() req: Request) {
+    const mem = await this.tokenService.unpack(req)
+    return this.postsService.findAllWithMember(+mem.id);
   }
 
   @Get('member/:uid') // 그 멤버에 맞는 글을 가져오기
@@ -52,9 +52,13 @@ export class PostsController {
     return this.postsService.findAllBySubjectWithMember(+uId, +sId);
   }
 
-  @Get('post/:id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  @Get('post/:tid') // 포스트 아이디로
+  @Public()
+  async findOne(@Param('tid') tId: number, @Req() req: Request) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.postsService.findOne(+tId, +mem.id);
   }
 
   @Patch(':id')

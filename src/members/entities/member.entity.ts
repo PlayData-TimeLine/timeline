@@ -1,4 +1,5 @@
 import { Comment } from "src/comments/entities/comment.entity";
+import { Heart } from "src/hearts/entities/heart.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { PrimaryGeneratedColumn, Entity, Column, OneToMany, Unique, BeforeInsert, DeleteDateColumn } from "typeorm";
 
@@ -34,6 +35,9 @@ export class Member {
 
     @OneToMany(() => Comment, (comment) => comment.member)
     comments: Comment[]
+
+    @OneToMany(() => Heart, (hearts) => hearts.member)
+    hearts: Heart[]
 
     @Column()
     profilePath: string;

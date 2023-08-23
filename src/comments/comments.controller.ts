@@ -4,23 +4,25 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Request } from 'express';
 import { Public } from 'src/auth/public.decorator';
+import { TokenService } from 'src/auth/token.service';
 
-@Controller('comments')
+@Controller('api/v1/comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) { }
+  constructor(private readonly commentsService: CommentsService, private tokenService: TokenService) { }
 
   @Post('/to-post/:pid')
   @Public()
-  create(@Body() createCommentDto: CreateCommentDto, @Param('pid') pId: number, @Req() req: Request) {
-    const uId = req.body.tokenData
+  async create(@Body() createCommentDto: CreateCommentDto, @Param('pid') pId: number, @Req() req: Request) {
+    const mem = await this.tokenService.unpack(req)
 
 
-    return this.commentsService.create(uId, pId, createCommentDto);
+    return this.commentsService.create(+mem.id, pId, createCommentDto);
   }
 
-  @Get('to-post/:pid')
-  findAll(@Param('pid') pId: number) {
-    return this.commentsService.findAllOfPost();
+  @Get('/to-post/:pid')
+  @Public()
+  async findAll(@Param('pid') pId: number) {
+    return await this.commentsService.findAllOfPost(pId);
   }
 
   @Get(':id')

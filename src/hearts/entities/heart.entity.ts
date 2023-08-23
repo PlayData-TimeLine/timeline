@@ -11,7 +11,7 @@ export class Heart {
     @Column({ default: true })
     isit: boolean
 
-    @ManyToOne(() => Member, (member) => member.comments)
+    @ManyToOne(() => Member, (member) => member.hearts)
     member: Member
 
     @ManyToOne(() => Post, (post) => post.heart)

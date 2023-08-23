@@ -35,9 +35,45 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
+
+
+  findLikeWhat = async (uid: number) => {
+
+    const list = await this.postRepository.find({
+      relations: {
+        heart: true
+      },
+      where: {
+        heart: {
+          member: {
+            id: uid
+          }
+        }
+      }
+    })
+
+    const Numlist = list.map((post) => post.id)
+    // 이건 내가 좋아요 한 리스트를 받아오는 쿼리.
+
+
+    return Numlist
+
+  }
+
   findAllWithMember = async (uid: number) => {
 
-    return await this.postRepository.find({
+    const postList = await this.findLikeWhat(uid)
+
+
+
+    // const how = box.map((post) => {
+    //   if (post.heart.member.id === uid) {
+    //     return { ...post, heart: true }
+    //   }
+    //   else { return post }
+    // })
+
+    const box2 = await this.postRepository.find({
       relations: {
         member: true,
         subject: true,
@@ -46,29 +82,24 @@ export class PostsService {
       select: {
         member: {
           id: true,
-          nickName: true
+          nickName: true,
+          profilePath: true
         },
         subject: {
           name: true
-        },
-
-        heart: { // 뭔가 방식이 좀 구리긴 함... 차라리 하트 서비스를 찌르는게 낫나?
-          isit: await this.postRepository.findOne({
-            relations: {
-              heart: true
-            },
-            where: {
-              heart: {
-                member: {
-                  id: uid
-                }
-              }
-            }
-          }) ? true : false
         }
 
       }
     })
+    const postNuM = box2.map((post) => post.id)
+    const get = box2.filter((post) => !postNuM.includes(post.id))
+
+
+
+
+    const boxx = [...box2, ...get] // box1은 친구 게시글 가져오고  //box2 는 전체 게시글 (번호 순서)
+
+    return box2
   }
 
   findAllBySubjectWithMember = async (uId: number, sId: number) => { // 내가 원하는 주제로 글을 가져오기
@@ -128,8 +159,43 @@ export class PostsService {
 
 
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  findOne = async (tId: number, uId: number) => {
+    return await this.postRepository.findOne({
+      relations: {
+        member: true,
+        subject: true,
+        heart: true
+      },
+      select: {
+        member: {
+          id: true,
+          nickName: true,
+          profilePath: true
+        },
+        subject: {
+          name: true
+        },
+
+        heart: { // 뭔가 방식이 좀 구리긴 함... 차라리 하트 서비스를 찌르는게 낫나?
+          isit: await this.postRepository.findOne({
+            relations: {
+              heart: true
+            },
+            where: {
+              heart: {
+                member: {
+                  id: uId
+                }
+              }
+            }
+          }) ? true : false
+        },
+
+      },
+      where: {
+        id: tId
+      }
+    });
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
