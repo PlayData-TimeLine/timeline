@@ -1,20 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Request } from 'express';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  @Post('/to-post/:pid')
+  @Public()
+  create(@Body() createCommentDto: CreateCommentDto, @Param('pid') pId: number, @Req() req: Request) {
+    const uId = req.body.tokenData
+
+
+    return this.commentsService.create(uId, pId, createCommentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  @Get('to-post/:pid')
+  findAll(@Param('pid') pId: number) {
+    return this.commentsService.findAllOfPost();
   }
 
   @Get(':id')

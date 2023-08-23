@@ -4,17 +4,18 @@ import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Request } from 'express';
+import { TokenService } from 'src/auth/token.service';
 
 
 @Controller('api/v1/subjects')
 export class SubjectsController {
-  constructor(private readonly subjectsService: SubjectsService) { }
+  constructor(private readonly subjectsService: SubjectsService, private tokenService: TokenService) { }
 
   @Post()
   @Roles('Member')
-  create(@Body() createSubjectDto: CreateSubjectDto, @Req() req: Request) {
+  async create(@Body() createSubjectDto: CreateSubjectDto, @Req() req: Request) {
 
-    const mem = req.body.tokenData;
+    const mem = await this.tokenService.unpack(req)
     return this.subjectsService.create(createSubjectDto, + mem.id);
   }
 
@@ -37,17 +38,17 @@ export class SubjectsController {
 
   @Get('/with-member')
   @Roles('Member')
-  findAllbyMember(@Req() req: Request) {
+  async findAllbyMember(@Req() req: Request) {
 
-    const mem = req.body.tokenData;
+    const mem = await this.tokenService.unpack(req)
 
     return this.subjectsService.findAllbyMember(+mem.id);
   }
 
   @Get('/with-member/:sid')
   @Roles('Member')
-  findAllbyMemberWithSubject(@Req() req: Request, @Param('sid') sid: number) {
-    const mem = req.body.tokenData;
+  async findAllbyMemberWithSubject(@Req() req: Request, @Param('sid') sid: number) {
+    const mem = await this.tokenService.unpack(req)
 
     return this.subjectsService.findAllbyMemberWithSubject(+mem.id, +sid);
   }

@@ -9,6 +9,7 @@ export class PostDto {
 
     constructor(post: CreatePostDto) {
 
+
         this.title = post.title
         this.content = post.content
         this.setTime = post.setTime

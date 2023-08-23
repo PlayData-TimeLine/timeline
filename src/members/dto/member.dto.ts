@@ -6,6 +6,10 @@ import { Member } from '../entities/member.entity'
 import { Builder } from 'builder-pattern'
 import { UpdateMemberDto } from './update-member.dto';
 
+import * as dotenv from 'dotenv'
+
+const config = dotenv.config().parsed 
+
 
 export class MemberDto {
 
@@ -25,7 +29,7 @@ export class MemberDto {
     }
 
     private toHashedPassword = async (pas: string): Promise<string> => {
-        const pass = await bcrypt.hash(pas, 10); // 이 소금도 뿌리기도 환경변수로 가야함.
+        const pass = await bcrypt.hash(pas, parseInt(config.SALT));
         return pass;
     }
 

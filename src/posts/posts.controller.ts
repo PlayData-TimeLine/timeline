@@ -5,18 +5,21 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Request } from 'express';
 import { Public } from 'src/auth/public.decorator';
+import { TokenService } from 'src/auth/token.service';
+
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { postUploadOption } from 'src/fileupload/multer.option';
 
 @Controller('api/v1/posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
+  constructor(private readonly postsService: PostsService, private tokenService: TokenService) { }
 
   @Post() // 글쓰기
-  @Public()
-  //@Roles('Member')
+  @Roles('Member')
   @UseInterceptors(FilesInterceptor('file', 1, postUploadOption)) //파일 읽어서 postUploadOption 에서 설정한 대로 저장
-  create(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number) {
+  async create(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number) {
+
+    const mem = await this.tokenService.unpack(req)
 
     //body field 값으로 createdto 생성
     const createPostDto = new CreatePostDto();
@@ -24,16 +27,15 @@ export class PostsController {
     createPostDto.content = content
     createPostDto.subjectNum = subjectNum
 
-    // //token 에서 uid 추출
-    const uID = req.body.tokenData.id
-
-    return this.postsService.create(+uID, createPostDto, req.files === null ? null : req.files[0].path);
+    return this.postsService.create(mem.id, createPostDto, req.files === null ? null : req.files[0].path);
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.
+  // @Roles('Member')
   @Public()
-  findAllWithMember() {
-    return this.postsService.findAllWithMember();
+  findAllWithMember(@Req() req: Request) {
+    // const uid = req.body.tokenData.id
+    return this.postsService.findAllWithMember(5);
   }
 
   @Get('member/:uid') // 그 멤버에 맞는 글을 가져오기

@@ -7,6 +7,7 @@ import { Subject } from "src/subjects/entities/subject.entity";
 
 export class CreatePostDto {
 
+
     @IsNotEmpty()
     title: string;
 

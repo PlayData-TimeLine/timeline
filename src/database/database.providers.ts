@@ -1,7 +1,13 @@
 import { DataSource } from 'typeorm';
 
+import * as dotenv from 'dotenv'
 
 //TODO 환경변수 작업해주기. 
+
+
+const config = dotenv.config().parsed 
+// 여기선 이렇게 사용해야함....
+
 
 export const databaseProviders = [
   {
@@ -9,11 +15,12 @@ export const databaseProviders = [
     useFactory: async () => {
       const dataSource = new DataSource({
         type: 'mysql',
-        host: 'localhost',
-        port: 3306,
-        username: 'root',
-        password: '1q2w3e4r!!',
-        database: 'test3',
+        host: config.DATABASE_HOST,
+        port: Number(config.DATABASE_PORT),
+        username: config.DATABASE_USERNAME,
+        password: config.DATABASE_PASSWORD,
+        database: config.DATABASE_DATABASE,
+        logging: true,  
         entities: [
           __dirname + '/../**/*.entity{.ts,.js}',
         ],
