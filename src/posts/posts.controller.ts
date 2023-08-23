@@ -27,7 +27,7 @@ export class PostsController {
     createPostDto.content = content
     createPostDto.subjectNum = subjectNum
 
-    return this.postsService.create(mem.id, createPostDto, req.files === null ? null : req.files[0].path);
+    return this.postsService.create(mem.id, createPostDto, file === null ? null : file[0].path);
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.

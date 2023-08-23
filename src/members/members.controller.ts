@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile, UploadedFiles, HttpException, HttpStatus } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -8,7 +8,7 @@ import { Public } from 'src/auth/public.decorator';
 import { Request } from 'express';
 import { updatePassword } from './dto/update-password.dto';
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { MulterDiskOptions, profileChangeOption } from 'src/fileupload/multer.option';
+import { profileChangeOption } from 'src/fileupload/multer.option';
 import { JwtService } from '@nestjs/jwt';
 import { TokenService } from 'src/auth/token.service';
 
@@ -72,15 +72,13 @@ export class MembersController {
 
   //임시로 roles 는 public
   @Post('/changeProfile')
-  @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
   @Roles('Member')
+  @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
   async changeProfile(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request) {
-
     const mem = await this.tokenService.unpack(req)
 
-
-    if (req.files === null) {
-      return null;
+    if (file === null) {
+      return new HttpException("잘못된 file", HttpStatus.BAD_REQUEST);
     } else {
       //email 하고 fileinterceptor 를 통과한 파일 경로를 넣어서 저장
       return await this.membersService.updateProfile(mem.id, file[0].path)

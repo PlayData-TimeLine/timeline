@@ -6,7 +6,7 @@ import { extname } from 'path';
 export const profileChangeOption = {
     fileFilter: (request, file, callback) => {
         //JPG, jpeg, png 파일만
-        if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
             callback(null, true);
         } else {
             callback(
@@ -67,7 +67,6 @@ export const postUploadOption = {
             try {
                 //파일 이름
                 callback(null, `${Date.now()}${extname(file.originalname)}`);
-                console.log("callback next")
             } catch (error) {
                 console.log(error)
             }
