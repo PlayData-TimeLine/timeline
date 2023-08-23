@@ -9,6 +9,7 @@ import { databaseProviders } from 'src/database/database.providers';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Builder } from 'builder-pattern';
 import { PostDto } from './dto/post.dto';
+import { async } from 'rxjs';
 
 @Injectable()
 export class PostsService {
@@ -19,17 +20,14 @@ export class PostsService {
     private readonly membersService: MembersService) { }
 
 
-  create = async (id: number, createPostDto: CreatePostDto) => {
+  create = async (id: number, createPostDto: CreatePostDto, imgPath: string) => {
 
-    // this.membersService.findOne()
     const member = new Member
     member.id = id
     const subject = new Subject
     subject.id = createPostDto.subjectNum
 
-    const post = new PostDto(createPostDto).toEntity(member, subject)
-
-
+    const post = new PostDto(createPostDto).toEntity(member, subject, imgPath)
     return await this.postRepository.save(post);
   }
 
@@ -101,9 +99,6 @@ export class PostsService {
       }
     })
   }
-
-
-
 
   findOne(id: number) {
     return `This action returns a #${id} post`;

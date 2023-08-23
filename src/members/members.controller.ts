@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -8,7 +8,7 @@ import { Public } from 'src/auth/public.decorator';
 import { Request } from 'express';
 import { updatePassword } from './dto/update-password.dto';
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { MulterDiskOptions, profileChangeOption } from 'src/fileupload/multer.option';
+import { profileChangeOption } from 'src/fileupload/multer.option';
 import { request } from 'http';
 
 
@@ -67,12 +67,12 @@ export class MembersController {
   //@Roles('Member')
   @Public()
   @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
-  changeProfile(@UploadedFile() file: Express.Multer.File, @Body('email') email: string, @Req() req: Request) {
-    if (req.files === null) {
+  changeProfile(@UploadedFiles() file: Express.Multer.File[], @Body('email') email: string, @Req() req: Request) {
+    if (file === null) {
       return null;
     } else {
       //email 하고 fileinterceptor 를 통과한 파일 경로를 넣어서 저장
-      return this.membersService.updateProfile(email, req.files[0].path)
+      return this.membersService.updateProfile(email, file[0].path)
     }
   }
 }

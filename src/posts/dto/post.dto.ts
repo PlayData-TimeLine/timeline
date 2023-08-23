@@ -9,25 +9,26 @@ export class PostDto {
 
     constructor(post: CreatePostDto) {
 
-        this.name = post.name
+        this.title = post.title
         this.content = post.content
         this.setTime = post.setTime
     }
 
-    name: string
+    title: string
 
     content: string
 
     setTime: Date
 
 
-    toEntity(mem: Member, sub: Subject): Post {
+    toEntity(mem: Member, sub: Subject, imgPath: string): Post {
         const post = Builder<Post>()
-            .title(this.name)
+            .title(this.title)
             .content(this.content)
             .member(mem)
             .setDate(this.setTime)
             .subject(sub)
+            .imgPaths(imgPath)
             .build()
 
         return post
