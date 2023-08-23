@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Request as test, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -9,11 +9,14 @@ import { Request } from 'express';
 import { updatePassword } from './dto/update-password.dto';
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterDiskOptions, profileChangeOption } from 'src/fileupload/multer.option';
+import { JwtService } from '@nestjs/jwt';
+import { TokenService } from 'src/auth/token.service';
 
 
 @Controller('api/v1/members')
+@Roles('Member')
 export class MembersController {
-  constructor(private readonly membersService: MembersService) { }
+  constructor(private readonly membersService: MembersService, private tokenService: TokenService) { }
 
   @Post('/signup')
   @Public()
@@ -23,17 +26,17 @@ export class MembersController {
 
   @Post('/login')
   @Public()
-  login(@Body() login: LoginMemberDto) {
-
-
-    return this.membersService.login(login)
+  async login(@Body() login: LoginMemberDto) {
+    return await this.membersService.login(login)
   }
 
   @Get('/me')
   @Roles('Member')
-  findAll(@Req() request: Request) {
-    const uID = request.body.tokenData.id // 위에서 내려준거 바당온거임 이거 쓰면될듯.
-    return this.membersService.findOne(+uID);
+  async findAll(@Req() req: Request) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.membersService.findOne(+mem.id);
   }
 
   @Get(':id')
@@ -44,16 +47,22 @@ export class MembersController {
 
   @Patch('/me/edit')
   @Roles('Member')
-  update(@Param('id') id: number, @Body() updateMemberDto: UpdateMemberDto) {
-    return this.membersService.update(+id, updateMemberDto);
+  async update(@Req() req: Request, @Body() updateMemberDto: UpdateMemberDto) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.membersService.update(mem.id, updateMemberDto);
   }
 
 
   @Patch('/me/pass-edit')
   @Roles('Member')
-  updatePassword(@Req() request: Request, @Body() updatePassword: updatePassword) {
-    const uID = request.body.tokenData.id
-    return this.membersService.updatePassword(+uID, updatePassword.prePassword, updatePassword.newpassword)
+  async updatePassword(@Req() req: Request, @Body() updatePassword: updatePassword) {
+
+    const mem = await this.tokenService.unpack(req)
+
+
+    return this.membersService.updatePassword(+mem.id, updatePassword.prePassword, updatePassword.newpassword)
   }
 
   @Delete(':id')
@@ -63,15 +72,18 @@ export class MembersController {
 
   //임시로 roles 는 public
   @Post('/changeProfile')
-  //@Roles('Member')
-  @Public()
   @UseInterceptors(FilesInterceptor('file', 1, profileChangeOption)) //파일 읽어서 prfilechangeoption 에서 설정한 대로 저장
-  changeProfile(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+  @Roles('Member')
+  async changeProfile(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request) {
+
+    const mem = await this.tokenService.unpack(req)
+
+
     if (req.files === null) {
       return null;
     } else {
       //email 하고 fileinterceptor 를 통과한 파일 경로를 넣어서 저장
-      return this.membersService.updateProfile(+req.body.tokenData.id, req.files[0].path)
+      return await this.membersService.updateProfile(mem.id, file[0].path)
     }
   }
 }

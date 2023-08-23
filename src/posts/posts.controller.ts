@@ -5,25 +5,28 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Request } from 'express';
 import { Public } from 'src/auth/public.decorator';
+import { TokenService } from 'src/auth/token.service';
 
 
 @Controller('api/v1/posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
+  constructor(private readonly postsService: PostsService, private tokenService: TokenService) { }
 
   @Post() // 글쓰기
   @Roles('Member')
-  create(@Req() req: Request, @Body() createPostDto: CreatePostDto) {
+  async create(@Req() req: Request, @Body() createPostDto: CreatePostDto) {
 
-    const uid = req.body.tokenData.id
-    return this.postsService.create(+uid, createPostDto);
+    const mem = await this.tokenService.unpack(req)
+
+    return this.postsService.create(mem.id, createPostDto);
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.
-  @Roles('Member')
+  // @Roles('Member')
+  @Public()
   findAllWithMember(@Req() req: Request) {
-    const uid = req.body.tokenData.id
-    return this.postsService.findAllWithMember(uid);
+    // const uid = req.body.tokenData.id
+    return this.postsService.findAllWithMember(5);
   }
 
   @Get('member/:uid') // 그 멤버에 맞는 글을 가져오기

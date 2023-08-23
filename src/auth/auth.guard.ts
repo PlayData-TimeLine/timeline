@@ -17,7 +17,7 @@ import * as dotenv from 'dotenv'
 //TODO 환경변수 작업해주기. 
 
 
-const config = dotenv.config().parsed 
+const config = dotenv.config().parsed
 
 
 
@@ -28,6 +28,8 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext,): Promise<boolean> {
 
 
+
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -36,6 +38,7 @@ export class AuthGuard implements CanActivate {
       // 💡 See this condition
       return true;
     } // 퍼블릭이면 토큰 검증 안하고 바로 트루 제공. 이건 로그인과 회원가입에 넣어야함.
+
 
 
     /// 토큰 까기   
@@ -55,8 +58,8 @@ export class AuthGuard implements CanActivate {
     if (!roles.includes(payload.role)) throw new HttpException('권한이 없습니다', HttpStatus.UNAUTHORIZED)
 
 
-
     request['body']['tokenData'] = await payload;
+
     return true;
   }
 

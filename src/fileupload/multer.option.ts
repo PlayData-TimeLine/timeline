@@ -46,7 +46,7 @@ export const MulterDiskOptions = {
 export const profileChangeOption = {
     fileFilter: (request, file, callback) => {
         console.log("profileChangeOption")
-        //console.log(request)
+        console.log(request)
         //JPG, jpeg, png 파일만
         if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
             callback(null, true);
@@ -77,7 +77,7 @@ export const profileChangeOption = {
     limits: {
         fileNameSize: 200, //필드명 사이즈 기본값 100
         fieldSize: 1024 * 1024, //필드 사이즈 값 설정 (기본 1mb)
-        fields: 2, //파일 형식이 아닌 필드의 최대 개수
+        fields: 10, //파일 형식이 아닌 필드의 최대 개수
         fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
         files: 1, //파일 최대 수 
     },

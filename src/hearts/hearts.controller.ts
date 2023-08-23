@@ -4,17 +4,20 @@ import { CreateHeartDto } from './dto/create-heart.dto';
 import { Request } from 'express';
 import { Public } from 'src/auth/public.decorator';
 import { Roles } from 'src/auth/roles.decorator';
+import { TokenService } from 'src/auth/token.service';
 
 @Controller('api/v1/hearts')
 export class HeartsController {
-  constructor(private readonly heartsService: HeartsService) { }
+  constructor(private readonly heartsService: HeartsService, private tokenService: TokenService) { }
 
   @Post('/to-post/:tid')
-  @Roles('Member')
-  hearts(@Req() req: Request, @Param('tid') tId: number) {
+  // @Roles('Member')
+  @Public()
+  async hearts(@Req() req: Request, @Param('tid') tId: number) {
 
-    const uId = req.body.tokenData.id
-    return this.heartsService.hearts(uId, tId);
+    const mem = await this.tokenService.unpack(req)
+
+    return this.heartsService.hearts(mem.id, tId);
   }
 
 

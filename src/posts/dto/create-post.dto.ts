@@ -7,8 +7,9 @@ import { Subject } from "src/subjects/entities/subject.entity";
 
 export class CreatePostDto {
 
+
     @IsNotEmpty()
-    name: string;
+    title: string;
 
     @IsNotEmpty()
     content: string;
