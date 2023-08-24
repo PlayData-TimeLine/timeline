@@ -15,19 +15,30 @@ export class PostsController {
   constructor(private readonly postsService: PostsService, private tokenService: TokenService) { }
 
   @Post() // 글쓰기
-  @Roles('Member')
+  //@Roles('Member')
+  @Public()
   @UseInterceptors(FilesInterceptor('file', 1, postUploadOption)) //파일 읽어서 postUploadOption 에서 설정한 대로 저장
-  async create(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number) {
+  async create(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number, @Body('setDate') setDate: string) {
 
-    const mem = await this.tokenService.unpack(req)
-
+    //const mem = await this.tokenService.unpack(req)
+    console.log(new Date(setDate))
     //body field 값으로 createdto 생성
     const createPostDto = new CreatePostDto();
     createPostDto.title = title;
     createPostDto.content = content
     createPostDto.subjectNum = subjectNum
+    createPostDto.setTime = new Date(setDate);
+    console.log(file[0])
 
-    return this.postsService.create(mem.id, createPostDto, file === null ? null : file[0].path);
+
+    if (!file || !file[0]) {
+      return this.postsService.create(1, createPostDto, "");
+    } else {
+      return this.postsService.create(1, createPostDto, file[0].path);
+    }
+
+
+
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.

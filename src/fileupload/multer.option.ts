@@ -5,6 +5,9 @@ import { extname } from 'path';
 
 export const profileChangeOption = {
     fileFilter: (request, file, callback) => {
+        if (file === null)
+            return;
+
         //JPG, jpeg, png 파일만
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
             callback(null, true);
@@ -42,6 +45,9 @@ export const profileChangeOption = {
 
 export const postUploadOption = {
     fileFilter: (request, file, callback) => {
+        if (file === null)
+            return;
+
         //JPG, jpeg, png 파일만
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
             callback(null, true);
