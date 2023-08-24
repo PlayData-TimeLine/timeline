@@ -7,6 +7,7 @@ import { Post } from 'src/posts/entities/post.entity';
 
 import { Repository } from 'typeorm'
 import { Comment } from './entities/comment.entity';
+import { pid } from 'process';
 
 @Injectable()
 export class CommentsService {
@@ -26,8 +27,17 @@ export class CommentsService {
     return this.commentRepository.save(com);
   }
 
-  findAllOfPost() {
-    return `This action returns all comments`;
+  findAllOfPost = async (pId: number) => {
+ 
+    return await this.commentRepository.find({
+
+      where: {
+        post: {
+          id: pId
+        }
+      }
+
+    });
   }
 
   findOne(id: number) {

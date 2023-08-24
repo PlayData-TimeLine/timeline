@@ -6,11 +6,12 @@ import { DatabaseModule } from 'src/database/database.module';
 import { MembersService } from 'src/members/members.service';
 import { MembersModule } from 'src/members/members.module';
 import { TokenModule } from 'src/auth/token.module';
+import { FriendsModule } from 'src/friends/friends.module';
 
 @Module({
   controllers: [PostsController],
   providers: [PostsService, ...postsProviders],
-  imports: [DatabaseModule, MembersModule, TokenModule],
+  imports: [DatabaseModule, MembersModule, TokenModule,FriendsModule],
   exports: [PostsService]
 })
 export class PostsModule { }

@@ -12,7 +12,7 @@ export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService, private tokenService: TokenService) { }
 
   @Post()
-  @Roles('Member')
+  @Roles('Member') // 주제 등록
   async create(@Body() createSubjectDto: CreateSubjectDto, @Req() req: Request) {
 
     const mem = await this.tokenService.unpack(req)
@@ -36,7 +36,7 @@ export class SubjectsController {
   }
   // 이걸 사용할지말지 고민중.
 
-  @Get('/with-member')
+  @Get('/with-member') // 그 멤버가 갖고있는 모든 주제 보기
   @Roles('Member')
   async findAllbyMember(@Req() req: Request) {
 
@@ -45,7 +45,7 @@ export class SubjectsController {
     return this.subjectsService.findAllbyMember(+mem.id);
   }
 
-  @Get('/with-member/:sid')
+  @Get('/with-member/:sid') // 주제 속으로 들어가는건데, 이건 내 생각엔 포스트로 가야함.
   @Roles('Member')
   async findAllbyMemberWithSubject(@Req() req: Request, @Param('sid') sid: number) {
     const mem = await this.tokenService.unpack(req)

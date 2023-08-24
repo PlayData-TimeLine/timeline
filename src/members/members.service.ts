@@ -7,10 +7,11 @@ import { MemberDto } from './dto/member.dto';
 import { LoginMemberDto } from './dto/login-member.dto';
 import { JwtService } from '@nestjs/jwt';
 
-import {ConfigService} from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 
 
 import * as bcrypt from 'bcrypt'
+import { FriendsService } from 'src/friends/friends.service';
 
 
 
@@ -19,9 +20,10 @@ import * as bcrypt from 'bcrypt'
 export class MembersService {
 
   constructor(
-  @Inject('MEMBER_REPOSITORY') private memberRepository: Repository<Member>, 
-  private jwtService: JwtService,
-  private configService:ConfigService) { } // 이건 쓸지안쓸지 모름 .. 안쓸듯...
+    @Inject('MEMBER_REPOSITORY') private memberRepository: Repository<Member>,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private friendsService: FriendsService) { } // 이건 쓸지안쓸지 모름 .. 안쓸듯...
 
 
   async signup(createMemberDto: CreateMemberDto): Promise<Member> {
@@ -32,7 +34,7 @@ export class MembersService {
     try {
 
       const mem = await this.memberRepository.save(member)
-      return mem;
+      return {...mem,password:''};
 
     } catch (err) {
 
@@ -98,6 +100,23 @@ export class MembersService {
         profilePath: true
       }
     });
+  }
+
+  findMemberById = async (yourId: number, pId: number) => {
+    const mem = await this.memberRepository.findOne({
+
+      where: {
+        id: pId
+      },
+      select:{
+        password:false
+      }
+    })
+
+    const relations = await this.friendsService.findRelation(yourId, pId)
+
+    return { ...mem ,relations: relations }
+
   }
 
 

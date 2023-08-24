@@ -45,6 +45,16 @@ export class MembersController {
     return this.membersService.findOne(+id);
   }
 
+  @Get('/member/:id')
+  @Roles('Member')
+  async findMemberById(@Req() req: Request, @Param('id') uid: number) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.membersService.findMemberById(+mem.id, uid)
+
+  }
+
   @Patch('/me/edit')
   @Roles('Member')
   async update(@Req() req: Request, @Body() updateMemberDto: UpdateMemberDto) {

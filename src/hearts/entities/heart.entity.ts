@@ -8,10 +8,10 @@ export class Heart {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ default: true })
-    isit: boolean
+    @Column()
+    memberId: number
 
-    @ManyToOne(() => Member, (member) => member.comments)
+    @ManyToOne(() => Member, (member) => member.hearts)
     member: Member
 
     @ManyToOne(() => Post, (post) => post.heart)

@@ -8,10 +8,10 @@ export class HeartDto {
 
     toEntity = (mem: Member, pos: Post) => {
 
-        const com = Builder(Heart).member(mem).post(pos).build()
+        const com = Builder(Heart).member(mem).post(pos).memberId(mem.id).build()
 
         return com
     }
 
 
-}
+} 

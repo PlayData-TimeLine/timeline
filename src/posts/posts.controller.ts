@@ -18,11 +18,12 @@ export class PostsController {
   //@Roles('Member')
   @Public()
   @UseInterceptors(FilesInterceptor('file', 1, postUploadOption)) //파일 읽어서 postUploadOption 에서 설정한 대로 저장
-  async create(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number, @Body('setDate') setDate: string) {
+  async post(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number, @Body('setDate') setDate: string) {
 
-    //const mem = await this.tokenService.unpack(req)
-    console.log(new Date(setDate))
+    const mem = await this.tokenService.unpack(req)
+
     //body field 값으로 createdto 생성
+    //객체를 보내려고 시도했는데 .... 
     const createPostDto = new CreatePostDto();
     createPostDto.title = title;
     createPostDto.content = content
@@ -32,40 +33,53 @@ export class PostsController {
 
 
     if (!file || !file[0]) {
-      return this.postsService.create(1, createPostDto, "");
+      return this.postsService.post(1, createPostDto, "");
     } else {
-      return this.postsService.create(1, createPostDto, file[0].path);
+      return this.postsService.post(1, createPostDto, file[0].path);
     }
-
-
-
   }
 
   @Get('all') // 모든 멤버의 글을 가져오기.
-  // @Roles('Member')
+  @Roles('Member')
+  async findAllWithMember(@Req() req: Request) {
+    const mem = await this.tokenService.unpack(req)
+    return this.postsService.findAllWithMember(+mem.id);
+  }
+
+  @Get('member/:uid') // 3번 그 멤버의 글을 전부 가져오기 , 작성순서로
+  @Roles('Member')
+  async findAllByMember(@Param('uid') uId: number, @Req() req: Request) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.postsService.findAllByMember(+uId, +mem.id);
+  }
+
+  //2, 4번임 포스트 번호에
+  @Get('/:tid') // 포스트 아이디로 글 하나 찾아오기
   @Public()
-  findAllWithMember(@Req() req: Request) {
-    // const uid = req.body.tokenData.id
-    return this.postsService.findAllWithMember(5);
+  async findOne(@Param('tid') tId: number, @Req() req: Request) {
+
+    const mem = await this.tokenService.unpack(req)
+
+    return this.postsService.findOne(+tId, +mem.id);
   }
 
-  @Get('member/:uid') // 그 멤버에 맞는 글을 가져오기
+  //5번. 특정 멤버의 타임라인용 글을 가져오기
+  @Get('member/:uid/time-line')
   @Roles('Member')
-  findAllByMember(@Param('uid') uId: number) {
+  findAllByMemberForTimeline(@Param('uid') uId: number, @Param('sid') sId: number) {
 
-    return this.postsService.findAllByMember(+uId);
+    return this.postsService.findAllByMemberForTimeline(+uId, +sId);
   }
 
-  @Get('member/:uid/subject/:sid') // 그 멤버의 주제로 글을 가져오기
+
+  //6번. 특정 멤버의 특정 주제로 글을 가져오기
+  @Get('member/:uid/time-line/:sid')
   @Roles('Member')
-  findAllBySubjectWithMember(@Param('uid') uId: number, @Param('sid') sId: number) {
+  findBySubjectWithMemberOfTimeline(@Param('uid') uId: number, @Param('sid') sId: number) {
 
-    return this.postsService.findAllBySubjectWithMember(+uId, +sId);
-  }
-
-  @Get('post/:id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+    return this.postsService.findBySubjectWithMemberOfTimeline(+uId, +sId);
   }
 
   @Patch(':id')

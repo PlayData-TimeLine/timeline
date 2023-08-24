@@ -46,22 +46,18 @@ export class SubjectsService {
   }
 
   findAllbyMember = async (id: number) => { //이건 그 멤버가 갖고있는 모든 글을 보는것
-    const mem = new Member()
-    mem.id = id
-
+ 
     return await this.subjectRepository.find({
       where: {
-        member: mem
+        member: {
+          id:id
+        }
       }
     })
   }
 
-  findAllbyMemberWithSubject = async (uid: number, sid: number) => { // 특정 주제를 보는것
-    const mem = new Member()
-    mem.id = uid
+  findAllbyMemberWithSubject = async (uid: number, sid: number) => { // 특정 주제를 보는것 // 근데 이건 포스트로 가야할듯 
 
-    const sub = new Subject()
-    sub.id = sid
 
     return await this.subjectRepository.find({
       relations: {
@@ -69,8 +65,12 @@ export class SubjectsService {
       },
       where: {
         posts: {
-          member: mem,
-          subject: sub
+          member: {
+            id:uid
+          },
+          subject: {
+            id:sid
+          }
         }
       }
     });
