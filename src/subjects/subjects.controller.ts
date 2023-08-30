@@ -14,7 +14,6 @@ export class SubjectsController {
   @Post()
   @Roles('Member') // 주제 등록
   async create(@Body() createSubjectDto: CreateSubjectDto, @Req() req: Request) {
-
     const mem = await this.tokenService.unpack(req)
     return this.subjectsService.create(createSubjectDto, + mem.id);
   }
@@ -36,12 +35,16 @@ export class SubjectsController {
   }
   // 이걸 사용할지말지 고민중.
 
-  @Get('/with-member') // 그 멤버가 갖고있는 모든 주제 보기
+  @Get('/with-member/:uid') // 그 멤버가 갖고있는 모든 주제 보기
   @Roles('Member')
-  async findAllbyMember(@Req() req: Request) {
-
+  async findAllbyMember(@Req() req: Request, @Param('uid') uid: number) {
     const mem = await this.tokenService.unpack(req)
-
+    return this.subjectsService.findAllbyMember(uid);
+  }
+  @Get('/with-member/me') // 내 모든 주제 보기
+  @Roles('Member')
+  async findAllbyme(@Req() req: Request) {
+    const mem = await this.tokenService.unpack(req)
     return this.subjectsService.findAllbyMember(+mem.id);
   }
 

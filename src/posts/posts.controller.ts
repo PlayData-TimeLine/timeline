@@ -15,12 +15,14 @@ export class PostsController {
   constructor(private readonly postsService: PostsService, private tokenService: TokenService) { }
 
   @Post() // 글쓰기
-  //@Roles('Member')
-  @Public()
+  @Roles('Member')
+  // @Public()
   @UseInterceptors(FilesInterceptor('file', 1, postUploadOption)) //파일 읽어서 postUploadOption 에서 설정한 대로 저장
-  async post(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number, @Body('setDate') setDate: string) {
+  async post(@UploadedFiles() file: Express.Multer.File[], @Req() req: Request, @Body('title') title: string, @Body('content') content: string, @Body('subjectNum') subjectNum: number = 0, @Body('setDate') setDate: string) {
 
     const mem = await this.tokenService.unpack(req)
+
+
 
     //body field 값으로 createdto 생성
     //객체를 보내려고 시도했는데 .... 
@@ -29,13 +31,12 @@ export class PostsController {
     createPostDto.content = content
     createPostDto.subjectNum = subjectNum
     createPostDto.setTime = new Date(setDate);
-    console.log(file[0])
 
 
     if (!file || !file[0]) {
-      return this.postsService.post(1, createPostDto, "");
+      return this.postsService.post(+mem.id, createPostDto, "");
     } else {
-      return this.postsService.post(1, createPostDto, file[0].path);
+      return this.postsService.post(+mem.id, createPostDto, file[0].path);
     }
   }
 
@@ -68,11 +69,12 @@ export class PostsController {
   //5번. 특정 멤버의 타임라인용 글을 가져오기
   @Get('member/:uid/time-line')
   @Roles('Member')
-  findAllByMemberForTimeline(@Param('uid') uId: number, @Param('sid') sId: number) {
+  async findAllByMemberForTimeline(@Param('uid') uId: number, @Req() req: Request) {
 
-    return this.postsService.findAllByMemberForTimeline(+uId, +sId);
+    const mem = await this.tokenService.unpack(req)
+
+    return await this.postsService.findAllByMemberForTimeline(+uId, +mem.id);
   }
-
 
   //6번. 특정 멤버의 특정 주제로 글을 가져오기
   @Get('member/:uid/time-line/:sid')

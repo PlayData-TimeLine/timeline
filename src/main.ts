@@ -16,6 +16,7 @@ const bootstrap = async () => {
   })); // 전역적으로 파이프 설치. 기존에 정의되어있는것들 위주로 사용
   app.enableCors();
   app.use('/profiles', express.static('profiles')); //프로필 폴더 static 설정
+  app.use('/postImges', express.static('postImges')); //프로필 폴더 static 설정
   await app.listen(parseInt(config.PORT));
 
 }

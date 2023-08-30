@@ -1,6 +1,6 @@
 import { Member } from "src/members/entities/member.entity";
 import { Post } from "src/posts/entities/post.entity";
-import { PrimaryGeneratedColumn, Entity, Column, OneToMany, Unique, BeforeInsert, DeleteDateColumn, ManyToOne } from "typeorm";
+import { PrimaryGeneratedColumn, Entity, Column, OneToMany, Unique, BeforeInsert, CreateDateColumn, ManyToOne } from "typeorm";
 
 @Entity('comments')
 export class Comment {
@@ -11,6 +11,9 @@ export class Comment {
 
     @Column()
     comment: string
+
+    @CreateDateColumn()
+    createAt: Date
 
     @ManyToOne(() => Member, (member) => member.comments)
     member: Member

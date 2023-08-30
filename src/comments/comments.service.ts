@@ -28,8 +28,22 @@ export class CommentsService {
   }
 
   findAllOfPost = async (pId: number) => {
- 
+
     return await this.commentRepository.find({
+      relations: {
+        member: true,
+        post: true
+      },
+      select: {
+        post: {
+          id: true
+        },
+        member: {
+          id: true,
+          nickName: true,
+          profilePath: true
+        }
+      },
 
       where: {
         post: {

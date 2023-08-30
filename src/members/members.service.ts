@@ -34,7 +34,7 @@ export class MembersService {
     try {
 
       const mem = await this.memberRepository.save(member)
-      return {...mem,password:''};
+      return { ...mem, password: '' };
 
     } catch (err) {
 
@@ -108,14 +108,14 @@ export class MembersService {
       where: {
         id: pId
       },
-      select:{
-        password:false
+      select: {
+        password: false
       }
     })
 
     const relations = await this.friendsService.findRelation(yourId, pId)
 
-    return { ...mem ,relations: relations }
+    return { ...mem, relations: relations }
 
   }
 
@@ -152,7 +152,7 @@ export class MembersService {
 
       member.profilePath = profilePath; // 프로필 경로 업데이트
       await this.memberRepository.save(member) // 변경된 내용을 저장
-      console.log("변경완료")
+
     } catch (error) {
       // 오류 처리
       throw new HttpException(`Failed to update profile: ${error.message}`, HttpStatus.BAD_REQUEST);

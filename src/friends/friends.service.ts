@@ -31,7 +31,7 @@ export class FriendsService {
       return this.friendsRepository.save(friend)
     } else {
 
-      return new HttpException("이미 존재합니다", HttpStatus.BAD_REQUEST)
+      return new HttpException("이미 신청을 보냈습니다.", HttpStatus.BAD_REQUEST)
     }
 
   }
@@ -80,42 +80,42 @@ export class FriendsService {
     })
   }
 
-  isHeFriend =async (to: number, from: number):Promise<string> => {
+  isHeFriend = async (to: number, from: number): Promise<string> => {
 
     const how = await this.friendsRepository.exist({
-  where:{
-    to:{
+      where: {
+        to: {
 
-      id:to
-    },
-    from:{
-      id:from
-    },
-    status:FriendStatus.FRIEND
-  }
-      
+          id: to
+        },
+        from: {
+          id: from
+        },
+        status: FriendStatus.FRIEND
+      }
+
     })
 
 
-    if(how ) return FriendResponseStatus.FRIEND
+    if (how) return FriendResponseStatus.FRIEND
     else return FriendResponseStatus.NOTFRIEND
-    
+
   }
 
 
   update = async (mid: number, uId: number) => {
     const relations = await this.findByIds(mid, uId)
 
-    if(!relations) throw new HttpException("잘못된 접근입니다.",HttpStatus.BAD_REQUEST)
+    if (!relations) throw new HttpException("잘못된 접근입니다.", HttpStatus.BAD_REQUEST)
 
 
-    const from =  new Member
+    const from = new Member
     from.id = mid
 
     const to = new Member
     to.id = uId
 
-    const mem = new FriendDto(from,to).toFriend()
+    const mem = new FriendDto(from, to).toFriend()
 
     await this.friendsRepository.save(mem)
 
@@ -128,25 +128,37 @@ export class FriendsService {
   remove = async (mId: number, uId: number) => {
 
     const friendFrom = await this.findByIds(uId, mId)
-    const friendTo = await this.findByIds(mId,uId)
+    const friendTo = await this.findByIds(mId, uId)
 
 
-    return this.friendsRepository.delete([friendFrom.id,friendTo.id]);
+    return this.friendsRepository.delete([friendFrom.id, friendTo.id]);
   }
 
-  findMyFriend =async (uId:number):Promise<Friend[]> => {
+  findMyFriend = async (uId: number): Promise<Friend[]> => {
 
     return await this.friendsRepository.find({
-      where:{
-        from:{
-          id:uId
+      relations: {
+        from: true,
+        to: true
+      },
+      select: {
+        from: {
+          id: true,
+          nickName: true,
+          profilePath: true,
+
+        }
+      },
+      where: {
+        to: {
+          id: uId
         }
       }
     })
-    
+
   }
 
-  findMyFriendNum =async (uId:number):Promise<Friend[]> => {
+  findMyFriendNum = async (uId: number): Promise<Friend[]> => {
 
 
     const from = new Member()
@@ -154,24 +166,24 @@ export class FriendsService {
     from.id = uId
 
     return await this.friendsRepository.find({
-      relations:{
-        to:true
+      relations: {
+        to: true
       },
 
-      select:{
-        to:{
-          id:true
+      select: {
+        to: {
+          id: true
         }
       },
-  
-      where:{
-        to:{
-          id:uId,
+
+      where: {
+        to: {
+          id: uId,
         },
-        status:FriendStatus.FRIEND
+        status: FriendStatus.FRIEND
       }
     })
-  
-    
+
+
   }
 }

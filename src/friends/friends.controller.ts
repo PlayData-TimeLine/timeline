@@ -12,7 +12,7 @@ import { Roles } from 'src/auth/roles.decorator';
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService, private tokenService: TokenService) { }
 
-  @Post(':id') // 친구신청
+  @Post('/to/:id') // 친구신청
   @Roles('Member')
   async apply(@Req() req: Request, @Param('id') uId: number) {
 
@@ -23,46 +23,46 @@ export class FriendsController {
 
 
 
-    if(mem.id === uId) throw new HttpException('잘못된 요청입니다',HttpStatus.BAD_REQUEST)
+    if (mem.id === uId) throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST)
 
     return this.friendsService.apply(+mem.id, uId);
   }
 
 
 
-  @Get(':id')
+  @Get('/to/:id')
   @Roles('Member') // 나랑 친구인지 검사
   async findFriend(@Param('id') uId: number, @Req() req: Request) {
 
     const mem = await this.tokenService.unpack(req)
 
-    if(mem.id === uId) throw new HttpException('잘못된 요청입니다',HttpStatus.BAD_REQUEST)
-    return this.friendsService.isHeFriend(+mem.id, uId);
+    if (mem.id === uId) throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST)
+    return this.friendsService.findRelation(+mem.id, uId);
   }
 
-  @Patch(':id')
+  @Patch('/to/:id')
   @Roles('Member') // 친구 승인
   async update(@Param('id') uId: number, @Req() req: Request) {
 
     const mem = await this.tokenService.unpack(req)
 
-    if(mem.id === uId) throw new HttpException('잘못된 요청입니다',HttpStatus.BAD_REQUEST)
+    if (mem.id === uId) throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST)
     return this.friendsService.update(+mem.id, +uId);
   }
 
-  @Delete(':id')
+  @Delete('/to/:id')
   @Roles('Member') // 친구 삭제
   async remove(@Param('id') uId: number, @Req() req: Request) {
     const mem = await this.tokenService.unpack(req)
 
-    if(mem.id === uId) throw new HttpException('잘못된 요청입니다',HttpStatus.BAD_REQUEST)
+    if (mem.id === uId) throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST)
 
     return this.friendsService.remove(+mem.id, +uId);
   }
 
-  @Get()
-  @Roles('Member') // 내 친구 전체 찾기
-  async findMyAllFriend(@Req() req: Request){
+  @Get('/me')
+  @Roles('Member') // 나에게 온 친구신청 전부 찾기
+  async findMyAllFriend(@Req() req: Request) {
     const mem = await this.tokenService.unpack(req)
 
     return this.friendsService.findMyFriend(+mem.id)
@@ -70,7 +70,7 @@ export class FriendsController {
 
   @Get('/of-num')
   @Roles('Member') // 내 친구 전체 찾기
-  async findMyFriendNum(@Req() req: Request){
+  async findMyFriendNum(@Req() req: Request) {
     const mem = await this.tokenService.unpack(req)
 
     return this.friendsService.findMyFriendNum(+mem.id)

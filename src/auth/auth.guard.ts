@@ -58,8 +58,6 @@ export class AuthGuard implements CanActivate {
     if (!roles.includes(payload.role)) throw new HttpException('권한이 없습니다', HttpStatus.UNAUTHORIZED)
 
 
-    request['body']['tokenData'] = await payload;
-
     return true;
   }
 
